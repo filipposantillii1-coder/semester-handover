@@ -1,0 +1,801 @@
+<meta charset="utf-8">
+<title>Semester Handover</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+<style>
+/* Layout: product website, sticky header, one view at a time (home, arriving, leaving, pass). Team deck palette: burgundy on white and light greys. */
+:root{
+  --bg:#FFFFFF;
+  --surface:#F2F2F2;
+  --line:#D5D5D5;
+  --fg:#1F1F1F;
+  --muted:#5E5E5E;
+  --accent:#7A1B2E;
+  --accent-fill:#7A1B2E;
+  --on-accent:#FFFFFF;
+  --accent-soft:#F6E9EC;
+  --ok:#2E6B47;
+  --ok-soft:#E5F0E9;
+  --display:"Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --body:"DM Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --r:10px;
+  --mark-bg:#7A1B2E;
+  --mark-fg:#FFFFFF;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#151213; --surface:#201B1D; --line:#3A3235; --fg:#F1EDEE; --muted:#B3A9AC;
+    --accent:#E58A9C; --accent-fill:#A3324A; --on-accent:#FFFFFF; --accent-soft:#2E1D22;
+    --ok:#8FD0A8; --ok-soft:#1C2A22; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151213; --surface:#201B1D; --line:#3A3235; --fg:#F1EDEE; --muted:#B3A9AC;
+  --accent:#E58A9C; --accent-fill:#A3324A; --on-accent:#FFFFFF; --accent-soft:#2E1D22;
+  --ok:#8FD0A8; --ok-soft:#1C2A22; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55}
+h1,h2,h3{font-family:var(--display);font-weight:800;letter-spacing:-.02em;line-height:1.12;margin:0;text-wrap:balance}
+h1{font-size:clamp(2rem,5vw,3.2rem)}
+h2{font-size:clamp(1.5rem,3.2vw,2rem)}
+h3{font-size:1.1rem;font-weight:700;letter-spacing:-.01em}
+p{margin:0}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+
+/* header */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar{max-width:1080px;margin:0 auto;padding-inline:16px;padding-block:12px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--fg);margin-right:auto}
+.brand{border:0;background:none;padding:0;cursor:pointer;font:inherit}
+.brand svg{width:40px;height:40px;flex:none}
+.wordmark{font-family:var(--display);font-weight:800;font-size:1.12rem;letter-spacing:-.02em;line-height:.95;text-align:left}
+.wordmark span{display:block;color:var(--accent)}
+.pilot{font-size:.7rem;font-weight:600;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 9px;margin-left:4px;white-space:nowrap}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav button{padding:8px 14px;border-radius:999px;border:1px solid transparent;background:none;color:var(--muted);font-weight:600;font-size:.88rem;cursor:pointer}
+nav button:hover{color:var(--fg);border-color:var(--line)}
+nav button[aria-current="page"]{background:var(--accent-soft);color:var(--accent)}
+
+main{max-width:1080px;margin:0 auto;padding-inline:16px;padding-block:32px 64px}
+main{display:flex;flex-direction:column;gap:72px}
+section.view{display:flex;flex-direction:column;gap:32px;scroll-margin-top:calc(env(safe-area-inset-top,0px) + 88px)}
+section.view .anchor{display:block;height:0;scroll-margin-top:calc(env(safe-area-inset-top,0px) + 96px)}
+section.view+section.view{border-top:1px solid var(--line);padding-top:56px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:999px;border:1px solid var(--accent-fill);background:var(--accent-fill);color:var(--on-accent);font-weight:600;cursor:pointer;text-decoration:none}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;color:var(--accent);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--accent)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+
+/* home */
+.hero{display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:center;padding-block:16px}
+.hero>*{min-width:0}
+.hero p.lead{font-size:1.1rem;color:var(--muted);margin-top:16px;max-width:52ch}
+.hero .ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.hero-mark{margin:0;display:flex;flex-direction:column;align-items:center;gap:16px}
+.hero-mark svg{width:min(220px,100%);height:auto;border-radius:22%;box-shadow:0 24px 50px -28px rgba(122,27,46,.6)}
+.hero-mark figcaption{font-size:.85rem;color:var(--muted);max-width:30ch;text-align:center}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.stat{background:var(--bg);padding:20px}
+.stat b{display:block;font-family:var(--display);font-size:2rem;color:var(--accent)}
+.stat span{font-size:.88rem;color:var(--muted)}
+.cycle{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:c}
+.cycle li{list-style:none;border-top:3px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:4px}
+.cycle li.in{border-top-color:var(--accent)}
+.cycle .date{font-weight:700;font-size:.9rem}
+.cycle ol{padding:0;margin:0}
+.who{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.footnote{font-size:.78rem;color:var(--muted)}
+
+/* booking */
+.split{display:grid;grid-template-columns:1.5fr 1fr;gap:32px;align-items:start}
+.split>*{min-width:0}
+.packs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pack{position:relative;border:1.5px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:12px;cursor:pointer;background:var(--bg)}
+.pack:hover{border-color:var(--muted)}
+.pack input{position:absolute;opacity:0;pointer-events:none}
+.pack:has(input:checked){border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.pack:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.pack .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.price{font-family:var(--display);font-size:2rem;font-weight:700}
+.items{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.items li{display:flex;gap:10px;align-items:center;font-size:.9rem}
+.ico{width:34px;height:34px;flex:none;border-radius:8px;background:var(--surface);display:grid;place-items:center;color:var(--accent)}
+.ico svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.stock{font-size:.8rem;color:var(--muted)}
+.choices{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 12px;font-size:.84rem;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.chip[disabled]{opacity:.45;cursor:not-allowed}
+.deal{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;text-align:left;border:1.5px solid var(--line);border-radius:var(--r);padding:16px 20px;background:var(--bg);cursor:pointer}
+.deal:hover{border-color:var(--muted)}
+.deal[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.deal-l{display:flex;flex-direction:column;gap:4px;min-width:0}
+.deal-r{display:flex;align-items:baseline;gap:8px}
+.label{font-size:.82rem;font-weight:700;margin:0 0 10px}
+.label .muted{font-weight:400}
+.packs3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pk{position:relative;border:1.5px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px;cursor:pointer;background:var(--bg);min-width:0}
+.pk:hover{border-color:var(--muted)}
+.pk input{position:absolute;opacity:0;pointer-events:none}
+.pk:has(input:checked){border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.pk:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.pk .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pk .tick{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line);display:grid;place-items:center;flex:none}
+.pk .tick svg{width:12px;height:12px;fill:none;stroke:var(--on-accent);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.pk:has(input:checked) .tick{background:var(--accent-fill);border-color:var(--accent-fill)}
+.pk:has(input:checked) .tick svg{opacity:1}
+.pk h3{font-size:1rem}
+.pk .p{font-family:var(--display);font-weight:800;font-size:1.25rem}
+.pk ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:4px;font-size:.84rem}
+.pk .std{font-size:.75rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px;margin-top:auto}
+.lines{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;font-size:.88rem}
+.lines li{display:flex;justify-content:space-between;gap:12px}
+.lines li.save{color:var(--ok)}
+.pledge{display:flex;gap:10px;align-items:flex-start;font-size:.82rem;padding:12px;border:1px solid var(--line);border-radius:8px}
+.pledge input{margin-top:3px}
+.compare{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:14px 16px;background:var(--surface);border-radius:var(--r);font-size:.9rem}
+.compare s{color:var(--muted)}
+.panel{border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:16px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 80px)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.88rem}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-weight:600}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:.82rem;font-weight:600}
+.field input,.field select{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--bg);width:100%}
+.field .hint{font-size:.76rem;color:var(--muted)}
+.field .err{font-size:.78rem;color:var(--accent)}
+.total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:12px}
+.total b{font-family:var(--display);font-size:1.6rem}
+.note{font-size:.8rem;color:var(--muted);display:flex;gap:8px}
+.note svg{width:16px;height:16px;flex:none;margin-top:2px;fill:none;stroke:var(--ok);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* listing wizard */
+.steps{display:flex;gap:8px;list-style:none;padding:0;margin:0;flex-wrap:wrap}
+.steps li{display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:600;color:var(--muted);padding-right:12px}
+.steps li span{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:.8rem}
+.steps li.on{color:var(--fg)}
+.steps li.on span{background:var(--accent-fill);border-color:var(--accent-fill);color:var(--on-accent)}
+.steps li.done span{border-color:var(--accent);color:var(--accent)}
+.card{border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:16px}
+.rows{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.row{display:flex;align-items:center;gap:14px;padding:12px 14px;border-top:1px solid var(--line);flex-wrap:wrap}
+.row:first-child{border-top:0}
+.row .name{font-weight:600;flex:1;min-width:120px}
+.thumb{width:56px;height:56px;border-radius:8px;background:var(--surface);border:1px dashed var(--line);display:grid;place-items:center;overflow:hidden;flex:none;color:var(--muted)}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.upload{position:relative;overflow:hidden}
+.upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:6px 12px;font-size:.82rem;cursor:pointer;border-left:1px solid var(--line)}
+.seg button:first-child{border-left:0}
+.seg button[aria-pressed="true"]{background:var(--accent-fill);color:var(--on-accent);font-weight:600}
+.checks{display:flex;gap:14px;flex-wrap:wrap;font-size:.84rem}
+.checks label{display:flex;gap:6px;align-items:center}
+.groups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.groups>div{display:flex;flex-direction:column;gap:8px;min-width:0}
+.groups .label{margin:0}
+.groups .choices{flex-direction:column;align-items:flex-start}
+@media (max-width:860px){.groups{grid-template-columns:1fr 1fr}}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.option{border:1.5px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px;cursor:pointer;position:relative}
+.option input{position:absolute;opacity:0;pointer-events:none}
+.option:has(input:checked){border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.wiz-nav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.success{background:var(--ok-soft);border-radius:var(--r);padding:20px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.success>div{min-width:0;flex:1}
+.success h3{color:var(--ok)}
+
+/* pass */
+.pass-wrap{display:grid;grid-template-columns:380px 1fr;gap:40px;align-items:start}
+.pass-wrap>*{min-width:0}
+.ticket{border:1px solid var(--line);border-radius:22px;overflow:hidden;background:var(--bg);box-shadow:0 18px 40px -24px rgba(0,0,0,.35);max-width:100%}
+.ticket-head{background:var(--accent-fill);color:var(--on-accent);padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.ticket-head b{font-family:var(--display);font-size:1.15rem}
+.ticket-head span{font-size:.75rem;opacity:.85}
+.ticket-body{padding:20px;display:flex;flex-direction:column;gap:18px}
+.scan{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.codebox{display:flex;flex-direction:column;align-items:center;gap:6px;padding:18px 22px;border:1.5px dashed var(--accent);border-radius:14px;background:var(--accent-soft);min-width:220px;max-width:100%}
+.code{font-family:var(--display);font-weight:800;letter-spacing:.08em;font-size:1.6rem;color:var(--fg)}
+.small{font-size:.8rem}
+.stamp{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:18px;border-radius:14px;background:var(--ok-soft)}
+.stamp svg{width:44px;height:44px;fill:none;stroke:var(--ok);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.stamp b{color:var(--ok);font-size:1.05rem}
+.perf{border-top:2px dashed var(--line);margin:0 -20px}
+.status{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0}
+.status li{display:grid;grid-template-columns:22px 1fr;gap:12px;position:relative;padding-bottom:14px}
+.status li:last-child{padding-bottom:0}
+.status li::before{content:"";position:absolute;left:10px;top:22px;bottom:0;width:2px;background:var(--line)}
+.status li:last-child::before{display:none}
+.status li.done::before{background:var(--accent)}
+.dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);background:var(--bg);display:grid;place-items:center;position:relative;z-index:1}
+.done .dot{background:var(--accent-fill);border-color:var(--accent-fill)}
+.done .dot svg{width:12px;height:12px;fill:none;stroke:var(--on-accent);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.now .dot{border-color:var(--accent)}
+.now .dot::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.status b{font-size:.9rem;display:block}
+.status small{font-size:.78rem;color:var(--muted)}
+.preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.pv{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.pv .ph{aspect-ratio:4/3;background:var(--surface);display:grid;place-items:center;color:var(--accent);max-width:100%}
+.pv .ph svg{width:44px;height:44px;fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+.pv .meta{padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.pv .meta b{font-size:.88rem}
+.tag{align-self:flex-start;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--ok-soft);color:var(--ok)}
+.tag.good{background:var(--accent-soft);color:var(--accent)}
+.example{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);color:var(--muted);border-radius:4px;padding:1px 6px;vertical-align:middle}
+.alert{border:1px solid var(--accent);background:var(--accent-soft);border-radius:var(--r);padding:14px 16px;font-size:.88rem}
+
+footer{border-top:1px solid var(--line)}
+footer .bar{font-size:.78rem;color:var(--muted)}
+
+@media (max-width:860px){
+  .hero,.split,.pass-wrap{grid-template-columns:1fr}
+  .packs3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .hero-mark{display:none}
+  .panel{position:static}
+  .cycle{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){
+  .packs,.packs3,.options,.stats{grid-template-columns:1fr}
+  .cycle{grid-template-columns:1fr}
+  nav{width:100%}
+  nav button{flex:1;padding:8px 6px}
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="logo" viewBox="0 0 40 40">
+      <rect width="40" height="40" rx="10" fill="var(--mark-bg)"/>
+      <path d="M26 14 A6 6 0 1 0 20 20 A6 6 0 1 1 14 26" fill="none" stroke="var(--mark-fg)" stroke-width="3.4" stroke-linecap="round"/>
+      <circle cx="26" cy="14" r="3" fill="var(--mark-fg)"/>
+      <path d="M9.6 27.6 L14 22.2 L18.4 27.6 Z" fill="var(--mark-fg)" stroke="var(--mark-fg)" stroke-width="1.5" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-duvet" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 11c3 1.5 6-1.5 9 0s6-1.5 9 0"/></symbol>
+    <symbol id="i-pillow" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="9" rx="4.5"/></symbol>
+    <symbol id="i-sheets" viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 9h16M8 13h8"/></symbol>
+    <symbol id="i-lamp" viewBox="0 0 24 24"><path d="M8 3h8l3 7H5z"/><path d="M12 10v9M8 21h8"/></symbol>
+    <symbol id="i-pan" viewBox="0 0 24 24"><circle cx="9" cy="13" r="6"/><path d="M15 13h7"/></symbol>
+    <symbol id="i-pot" viewBox="0 0 24 24"><path d="M5 9h14v8a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3z"/><path d="M3 9h18M10 6h4"/></symbol>
+    <symbol id="i-plates" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></symbol>
+    <symbol id="i-cutlery" viewBox="0 0 24 24"><path d="M7 3v18M5 3v5a2 2 0 0 0 4 0V3M17 3c-2.5 2-2.5 7 0 9v9"/></symbol>
+    <symbol id="i-mug" viewBox="0 0 24 24"><path d="M5 7h11v10a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3z"/><path d="M16 10h2a2 2 0 0 1 0 4h-2"/></symbol>
+    <symbol id="i-bike" viewBox="0 0 24 24"><circle cx="6" cy="16" r="4"/><circle cx="18" cy="16" r="4"/><path d="M6 16l4-8h5l3 8M10 8l2.5 8M14 5h3"/></symbol>
+    <symbol id="i-heater" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="13" rx="2"/><path d="M8 8v7M12 8v7M16 8v7M7 21v-3M17 21v-3"/></symbol>
+    <symbol id="i-fan" viewBox="0 0 24 24"><circle cx="12" cy="10" r="7"/><circle cx="12" cy="10" r="1.5"/><path d="M12 17v4M8 21h8"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.5 8-8 9-4.5-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></symbol>
+  </defs>
+</svg>
+
+<header>
+  <div class="bar">
+    <button class="brand" type="button" data-go="home" aria-label="Semester Handover, home">
+      <svg aria-hidden="true"><use href="#logo"/></svg>
+      <span class="wordmark">semester<span>handover</span></span>
+      <span class="pilot">Nova SBE pilot</span>
+    </button>
+    <nav aria-label="Main">
+      <button type="button" data-go="arrive">I'm arriving</button>
+      <button type="button" data-go="leave">I'm leaving</button>
+      <button type="button" data-go="pass">My pass</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- HOME -->
+<section class="view" id="v-home">
+  <div class="hero">
+    <div>
+      <p class="eyebrow">Winter cycle 2026/27 · Reservations open</p>
+      <h1>Make leaving lighter and arriving simpler.</h1>
+      <p class="lead">Departing exchange students pass on the room essentials they can't take home. Incoming students reserve a starter pack before they land and pick it up in Lisbon during the welcome week.</p>
+      <div class="ctas">
+        <button class="btn" type="button" data-go="arrive">Reserve a starter pack</button>
+        <button class="btn ghost" type="button" data-go="leave">List what you're leaving</button>
+      </div>
+    </div>
+    <figure class="hero-mark">
+      <svg viewBox="0 0 40 40" role="img" aria-label="Semester Handover logo"><use href="#logo"/></svg>
+      <figcaption><b>The dot</b> is a student leaving Lisbon. <b>The arrow</b> is the next one arriving. The line between them is what gets handed over.</figcaption>
+    </figure>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b class="num">96€</b><span>spent on average on room basics in the first month</span></div>
+    <div class="stat"><b class="num">50%</b><span>of exchange students left their items in the room</span></div>
+    <div class="stat"><b class="num">88%</b><span>would likely use Semester Handover when arriving</span></div>
+  </div>
+  <p class="footnote">Source: our survey of 24 current and former exchange students, 30 September to 2 October 2026.</p>
+
+  <div class="card">
+    <div>
+      <p class="eyebrow">How one handover works</p>
+      <h2>Winter cycle 2026/27</h2>
+    </div>
+    <ol class="cycle">
+      <li><span class="who">Leaving</span><span class="date">Nov to 4 Dec</span><span class="muted">Photograph and list your items, before exams start.</span></li>
+      <li><span class="who">Leaving</span><span class="date">7 to 21 Dec</span><span class="muted">Drop off at the partner residence or have them collected. Bedding is washed.</span></li>
+      <li class="in"><span class="who">Arriving</span><span class="date">Until 15 Jan</span><span class="muted">Reserve your packs and pay. You see their photos once they're built.</span></li>
+      <li class="in"><span class="who">Arriving</span><span class="date">29 Jan 2027</span><span class="muted">Welcome Day. Show your pass and take your pack home.</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- SCREEN 1: PRE-ARRIVAL BOOKING -->
+<section class="view" id="v-arrive">
+  <span class="anchor" id="arrive"></span>
+  <div>
+    <p class="eyebrow">Screen 1 · Pre-arrival booking</p>
+    <h2>Reserve your room basics</h2>
+    <p class="muted" style="margin-top:8px">For exchange students arriving at Nova SBE in January 2027. Pickup on Welcome Day, 29 January 2027.</p>
+  </div>
+
+  <form class="split" id="bookForm" novalidate>
+    <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+
+      <button type="button" class="deal" id="dealBtn" aria-pressed="true">
+        <span class="deal-l">
+          <span class="eyebrow">Complete room</span>
+          <b>Bed pack + Kitchen pack + Desk lamp</b>
+          <span class="muted small" id="dealHint">Selected. You save 2€ compared with buying the three packs separately.</span>
+        </span>
+        <span class="deal-r"><s class="muted num">32€</s> <span class="price num">30€</span></span>
+      </button>
+
+      <div>
+        <p class="label">Packs <span class="muted">· every pack has fixed contents, checked against our specification</span></p>
+        <div class="packs3" id="packCards"></div>
+      </div>
+
+      <div>
+        <p class="label">Add-on <span class="muted">· one per order, 15€, while stock lasts</span></p>
+        <div class="choices" id="addonChoices" role="radiogroup" aria-label="Add-on"></div>
+      </div>
+
+      <div class="compare">
+        <span>Buying the same basics new: <s class="num">about 96€</s></span>
+        <span>Your order: <b class="num" id="cmpPrice">30€</b></span>
+      </div>
+
+      <div class="card">
+        <h3>How you'll know what you get</h3>
+        <p class="muted">The contents of each pack are fixed, so you know what you get even before the items are matched. Packs are built from items that departing students photograph and list. After matching, around 5 January, you'll see photos and the condition of every item. If something doesn't match, you get a full refund. If an item is missing, we replace it with a second-hand item of the same type. If your add-on runs out, we refund it.</p>
+      </div>
+    </div>
+
+    <aside class="panel" aria-label="Checkout">
+      <h3>Your reservation</h3>
+      <ul class="lines" id="sumLines"></ul>
+      <div class="field">
+        <label for="hub">Residence hub</label>
+        <select id="hub">
+          <option selected>Carcavelos, next to Nova SBE</option>
+          <option disabled>More Lisbon residences from 2028</option>
+        </select>
+      </div>
+      <dl class="kv">
+        <dt>Pickup</dt><dd>Welcome Day, 29 Jan 2027</dd>
+        <dt>Held until</dt><dd>12 Feb 2027</dd>
+      </dl>
+      <div class="field">
+        <label for="slot">Pickup time</label>
+        <select id="slot">
+          <option>10:00 to 10:30</option><option>10:30 to 11:00</option><option selected>11:00 to 11:30</option>
+          <option>14:00 to 14:30</option><option>14:30 to 15:00</option><option>15:30 to 16:00</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="name">Full name</label>
+        <input id="name" autocomplete="name" placeholder="Lena Hoffmann">
+      </div>
+      <div class="field">
+        <label for="email">University email</label>
+        <input id="email" type="email" autocomplete="email" placeholder="lena.hoffmann@uni-mannheim.de">
+        <span class="hint">We only accept university emails, so every user is a verified student.</span>
+        <span class="err" id="emailErr" hidden>Use your university email, not a personal one like Gmail or Outlook.</span>
+      </div>
+      <label class="pledge"><input type="checkbox" id="pledge"> <span><b>Pass it on (optional).</b> When I leave Lisbon, I'll list my own items so the next student gets a pack too.</span></label>
+      <div class="total"><span>Total today</span><b class="num" id="sumPrice">30€</b></div>
+      <span class="err" id="packErr" hidden>Choose at least one pack.</span>
+      <button class="btn" type="submit" id="payBtn">Pay 30€ with Stripe</button>
+      <p class="note"><svg><use href="#i-shield"/></svg><span>Full refund if your pack isn't ready or doesn't match its preview. Reservations close 15 January 2027.</span></p>
+    </aside>
+  </form>
+</section>
+
+<!-- SCREEN 2: DEPARTING LISTING FLOW -->
+<section class="view" id="v-leave">
+  <span class="anchor" id="leave"></span>
+  <div>
+    <p class="eyebrow">Screen 2 · Departing listing flow</p>
+    <h2>Pass on what you can't take home</h2>
+    <p class="muted" style="margin-top:8px">Listing is free. Your items go into starter packs for students arriving on 29 January. Listings close 4 December 2026, before exams start.</p>
+  </div>
+
+  <ol class="steps" id="steps">
+    <li data-s="1" class="on"><span>1</span>Photos</li>
+    <li data-s="2"><span>2</span>Condition</li>
+    <li data-s="3"><span>3</span>Drop-off</li>
+  </ol>
+
+  <!-- step 1 -->
+  <div class="card" id="s1">
+    <div>
+      <h3>What are you leaving behind?</h3>
+      <p class="muted">Tick the items you have from our standard list, then add a photo of each one.</p>
+    </div>
+    <div class="groups" id="itemPicker"></div>
+    <p class="note muted" style="margin:0">Only items on this list are accepted. Mattresses, furniture, food and personal items are not.</p>
+    <div class="rows" id="photoRows"></div>
+  </div>
+
+  <!-- step 2 -->
+  <div class="card" id="s2" hidden>
+    <div>
+      <h3>How is each item?</h3>
+      <p class="muted">Be honest. Incoming students see this tag in their pack preview. Items below "fair" are not accepted.</p>
+    </div>
+    <div class="rows" id="condRows"></div>
+  </div>
+
+  <!-- step 3 -->
+  <div class="card" id="s3" hidden>
+    <div>
+      <h3>How do we get your items?</h3>
+      <p class="muted">Collection runs after exams, from 7 to 21 December 2026.</p>
+    </div>
+    <div class="options">
+      <label class="option">
+        <input type="radio" name="handover" value="drop" checked>
+        <b>Drop off at the partner residence</b>
+        <span class="muted">Carcavelos, ground-floor storage room. Show your drop-off code at check-in.</span>
+      </label>
+      <label class="option">
+        <input type="radio" name="handover" value="van">
+        <b>Have them collected</b>
+        <span class="muted">Our van passes on 10 and 17 December. We delete your address once it's done.</span>
+      </label>
+    </div>
+    <div class="field" style="max-width:320px">
+      <label for="dropDay">Day</label>
+      <select id="dropDay"></select>
+    </div>
+  </div>
+
+  <div class="success" id="listDone" hidden>
+    <div class="scan">
+      <div class="codebox">
+        <span class="eyebrow">Drop-off code</span>
+        <p class="code num" id="dropCode">SH-DROP-1207</p>
+      </div>
+    </div>
+    <div>
+      <h3 id="doneTitle">Your items are listed</h3>
+      <p id="doneText" style="margin-top:6px"></p>
+      <p class="muted" style="margin-top:6px" id="doneSub">Show this code when you hand your items over, so each item is linked to your listing. We'll remind you two days before.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <button class="btn ghost" type="button" id="dropScan">Try it: simulate the drop-off check-in</button>
+        <button class="btn ghost" type="button" id="newListing">Start a new listing</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wiz-nav" id="wizNav">
+    <button class="btn ghost" type="button" id="back" hidden>Back</button>
+    <span></span>
+    <button class="btn" type="button" id="next">Continue</button>
+  </div>
+</section>
+
+<!-- SCREEN 3: HANDOVER PASS -->
+<section class="view" id="v-pass">
+  <span class="anchor" id="pass"></span>
+  <div>
+    <p class="eyebrow">Screen 3 · Handover pass</p>
+    <h2>Your pass for Welcome Day</h2>
+  </div>
+
+  <div class="pass-wrap">
+    <div class="ticket">
+      <div class="ticket-head">
+        <div><b>Handover Pass</b><br><span id="pName">Lena Hoffmann</span> <span class="example" id="pExample">Example</span></div>
+        <svg width="36" height="36" aria-hidden="true" style="--mark-bg:#FFFFFF;--mark-fg:#7A1B2E"><use href="#logo"/></svg>
+      </div>
+      <div class="ticket-body">
+        <div class="scan" id="scanBox">
+          <div class="codebox">
+            <span class="eyebrow">Pickup code</span>
+            <p class="code num" id="pCode">SH-2701-0482</p>
+          </div>
+          <p class="muted small">Show this code at the residence desk. Staff check it against your booking and hand you your pack.</p>
+          <button class="btn ghost" type="button" id="scanBtn">Try it: simulate the desk check-in</button>
+        </div>
+        <div class="stamp" id="stamp" hidden>
+          <svg viewBox="0 0 24 24"><use href="#i-check"/></svg>
+          <b>Pack collected</b>
+          <span class="muted small" id="stampTime">29 Jan 2027, 11:07 · Partner residence, Carcavelos</span>
+          <button class="btn ghost" type="button" id="resetScan">Reset demo</button>
+        </div>
+        <dl class="kv">
+          <dt>Order</dt><dd id="pPack">Complete room + heater · 45€ paid</dd>
+          <dt>Day</dt><dd>Welcome Day, 29 Jan 2027</dd>
+          <dt>Time</dt><dd id="pSlot">11:00 to 11:30</dd>
+          <dt>Where</dt><dd>Partner residence, Carcavelos</dd>
+          <dt>Held until</dt><dd>12 Feb 2027</dd>
+          <dt>Pass it on</dt><dd id="pPledge">Yes</dd>
+        </dl>
+        <div class="perf"></div>
+        <ol class="status" id="pStatus"></ol>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+      <div>
+        <h3>Your pack preview</h3>
+        <p class="muted" style="margin-top:4px" id="pvLead">Built on 5 January from items listed by departing students in December 2026.</p>
+      </div>
+      <div class="preview" id="preview"></div>
+      <div class="card">
+        <h3>Something doesn't look right?</h3>
+        <p class="muted">If an item doesn't match its photo, tell us before Welcome Day. You get a full refund, or we swap the item if we have another.</p>
+        <div><button class="btn ghost" type="button" id="mismatch">Report a mismatch</button></div>
+        <div class="alert" id="mismatchMsg" hidden>Report received. We'll reply within 48 hours with a swap or a full refund to your card.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="bar"><svg width="20" height="20" aria-hidden="true"><use href="#logo"/></svg> Semester Handover · Team 1B, Product Design and Development, Nova SBE · Clickable prototype, not a live service</div>
+</footer>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const ico=id=>`<svg><use href="#i-${id}"/></svg>`;
+
+  /* ---------- navigation: buttons switch views, no page reload ---------- */
+  const views=["home","arrive","leave","pass"];
+  // All sections live on one page; the menu scrolls to them.
+  function mark(v){ $$("nav button").forEach(b=>{ if(b.dataset.go===v) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); }); }
+  function go(v,instant){
+    if(!views.includes(v)) v="home";
+    const el=$("#v-"+v);
+    if(v==="home"){ window.scrollTo(0,0); }
+    else{
+      const y=el.getBoundingClientRect().top+window.pageYOffset-($("header").offsetHeight+16);
+      window.scrollTo({top:Math.max(0,y),behavior:instant?"instant":"smooth"});
+    }
+    mark(v);
+  }
+  function spy(){
+    const off=$("header").offsetHeight+40; let cur="home";
+    views.forEach(n=>{ if($("#v-"+n).getBoundingClientRect().top<=off) cur=n; });
+    mark(cur);
+  }
+  window.addEventListener("scroll",spy,{passive:true});
+  document.addEventListener("click",e=>{const t=e.target.closest("[data-go]"); if(t){e.preventDefault(); go(t.dataset.go);}});
+
+  /* ---------- Screen 1: booking (Appendix D catalog) ---------- */
+  const PACKS=[
+    {id:"bed",name:"Bed pack",price:16,icon:"duvet",items:["1 duvet","1 pillow","1 bedding set (cover and sheet), single bed"],std:"Washed, no stains or holes",left:"38 left"},
+    {id:"kitchen",name:"Kitchen pack",price:12,icon:"pan",items:["1 frying pan","1 pot","2 plates, 2 mugs","2 sets of cutlery"],std:"Clean, no cracks, pan coating intact",left:"44 left"},
+    {id:"lamp",name:"Desk lamp",price:4,icon:"lamp",items:["1 desk lamp","with a working bulb"],std:"Tested, cable and plug intact",left:"51 left"}
+  ];
+  const ADDONS=[
+    {id:"",name:"No add-on",left:""},
+    {id:"Heater",name:"Heater",icon:"heater",left:"6 left"},
+    {id:"Bike",name:"Bike",icon:"bike",left:"3 left"},
+    {id:"Fan",name:"Fan",icon:"fan",left:"sold out",off:true}
+  ];
+  const state={packs:new Set(["bed","kitchen","lamp"]),addon:"Heater",name:"Lena Hoffmann",slot:"11:00 to 11:30",pledge:true,example:true,code:"SH-2701-0482",collected:false};
+  const isComplete=()=>state.packs.size===3;
+  const packSum=()=>PACKS.filter(p=>state.packs.has(p.id)).reduce((a,p)=>a+p.price,0);
+  const total=()=>(isComplete()?30:packSum())+(state.addon&&state.packs.size?15:0);
+  const orderLabel=()=>{
+    const base=isComplete()?"Complete room":PACKS.filter(p=>state.packs.has(p.id)).map(p=>p.name).join(", ");
+    return base+(state.addon?" + "+state.addon.toLowerCase():"");
+  };
+  $("#packCards").innerHTML=PACKS.map(p=>`
+    <label class="pk">
+      <input type="checkbox" value="${p.id}" ${state.packs.has(p.id)?"checked":""}>
+      <div class="top"><span class="ico">${ico(p.icon)}</span><span class="tick"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg></span></div>
+      <div class="top"><h3>${p.name}</h3><span class="p num">${p.price}€</span></div>
+      <ul>${p.items.map(i=>`<li>${i}</li>`).join("")}</ul>
+      <span class="stock num">${p.left}</span>
+      <span class="std">Standard: ${p.std}</span>
+    </label>`).join("");
+  $("#addonChoices").innerHTML=ADDONS.map(a=>`<button type="button" class="chip" role="radio" data-addon="${a.id}" aria-pressed="${state.addon===a.id}" ${a.off?"disabled":""}>${a.icon?`<svg width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.8"><use href="#i-${a.icon}"/></svg>`:""}${a.name}${a.id?" · 15€":""}${a.left?` · ${a.left}`:""}</button>`).join("");
+  function syncBooking(){
+    const t=total();
+    $("#dealBtn").setAttribute("aria-pressed",isComplete());
+    $("#dealHint").textContent=isComplete()?"Selected. You save 2€ compared with buying the three packs separately.":"Take all three packs for 30€ instead of 32€.";
+    $$("#packCards input").forEach(i=>i.checked=state.packs.has(i.value));
+    $$("#addonChoices .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.addon===state.addon));
+    const lines=PACKS.filter(p=>state.packs.has(p.id)).map(p=>[p.name,p.price+"€",""]);
+    if(isComplete()) lines.push(["Complete room discount","-2€","save"]);
+    if(state.addon&&state.packs.size) lines.push([state.addon+" (add-on)","15€",""]);
+    $("#sumLines").innerHTML=lines.length?lines.map(([a,b,c])=>`<li class="${c}"><span>${a}</span><span class="num">${b}</span></li>`).join(""):`<li class="muted">No pack selected yet. Add-ons come with at least one pack.</li>`;
+    $("#cmpPrice").textContent=t+"€";
+    $("#sumPrice").textContent=t+"€";
+    $("#payBtn").textContent=`Pay ${t}€ with Stripe`;
+    $("#packErr").hidden=true;
+  }
+  $("#dealBtn").onclick=()=>{ state.packs=isComplete()?new Set():new Set(["bed","kitchen","lamp"]); syncBooking(); };
+  $$("#packCards input").forEach(i=>i.addEventListener("change",()=>{ i.checked?state.packs.add(i.value):state.packs.delete(i.value); syncBooking(); }));
+  $$("#addonChoices .chip").forEach(b=>b.addEventListener("click",()=>{ if(b.disabled) return; state.addon=b.dataset.addon; syncBooking(); }));
+  const personal=/@(gmail|googlemail|outlook|hotmail|live|yahoo|icloud|me|proton|protonmail|gmx|libero)\./i;
+  $("#bookForm").addEventListener("submit",e=>{
+    e.preventDefault();
+    if(!state.packs.size){ $("#packErr").hidden=false; return; }
+    const email=$("#email").value.trim();
+    const bad=!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || personal.test(email);
+    $("#emailErr").hidden=!bad;
+    if(bad){ $("#emailErr").textContent=!email?"Enter your university email to reserve.":"Use your university email, not a personal one like Gmail or Outlook."; $("#email").focus(); return; }
+    state.name=$("#name").value.trim()||"Lena Hoffmann";
+    state.slot=$("#slot").value;
+    state.pledge=$("#pledge").checked;
+    state.paid=total(); state.label=orderLabel();
+    state.example=false; state.justBooked=true; state.collected=false;
+    state.code="SH-2701-"+String(1000+Math.floor(Math.random()*9000));
+    renderPass();
+    go("pass");
+  });
+  syncBooking();
+
+  /* ---------- Screen 2: listing flow ---------- */
+  const catalogue=[
+    ["Duvet","duvet","Bed pack",["Washed","No stains or holes"]],["Pillow","pillow","Bed pack",["Washed","No stains or holes"]],["Bedding set","sheets","Bed pack",["Washed","Cover and sheet, single bed"]],
+    ["Frying pan","pan","Kitchen pack",["Clean","Coating intact"]],["Pot","pot","Kitchen pack",["Clean","No dents or cracks"]],["Plates","plates","Kitchen pack",["Clean","No cracks"]],["Mugs","mug","Kitchen pack",["Clean","No cracks"]],["Cutlery","cutlery","Kitchen pack",["Clean","Complete set"]],
+    ["Desk lamp","lamp","Desk lamp",["Tested, bulb works","Cable and plug intact"]],
+    ["Heater","heater","Add-ons",["Tested","Cable and plug intact","CE mark"]],["Fan","fan","Add-ons",["Tested","Cable and plug intact","CE mark"]],["Bike","bike","Add-ons",["Brakes and lights checked","Tires inflated"]]
+  ];
+  const listing=new Map([["Duvet",{c:"Good",photo:null}],["Frying pan",{c:"Good",photo:null}],["Desk lamp",{c:"Like new",photo:null}],["Heater",{c:"Like new",photo:null}]]);
+  let step=1;
+  function drawPicker(){
+    const groups=["Bed pack","Kitchen pack","Desk lamp","Add-ons"];
+    $("#itemPicker").innerHTML=groups.map(g=>`<div><p class="label">${g}</p><div class="choices">${catalogue.filter(c=>c[2]===g).map(([n,i])=>`<button type="button" class="chip" data-item="${n}" aria-pressed="${listing.has(n)}"><svg width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.8"><use href="#i-${i}"/></svg>${n}</button>`).join("")}</div></div>`).join("");
+    $$("#itemPicker .chip").forEach(b=>b.onclick=()=>{const n=b.dataset.item; listing.has(n)?listing.delete(n):listing.set(n,{c:"Good",photo:null}); drawPicker(); drawPhotos();});
+  }
+  const iconOf=n=>(catalogue.find(c=>c[0]===n)||[,"duvet"])[1];
+  const checksOf=n=>(catalogue.find(c=>c[0]===n)||[,,,["Clean"]])[3];
+  function drawPhotos(){
+    if(!listing.size){$("#photoRows").innerHTML=`<div class="row muted">Pick at least one item above.</div>`;return;}
+    $("#photoRows").innerHTML=[...listing].map(([n,v])=>`
+      <div class="row">
+        <div class="thumb">${v.photo?`<img src="${v.photo}" alt="Photo of ${n}">`:ico("camera")}</div>
+        <span class="name">${n}</span>
+        <label class="btn ghost upload">${v.photo?"Change photo":"Add photo"}<input type="file" accept="image/*" data-photo="${n}" aria-label="Photo of ${n}"></label>
+      </div>`).join("");
+    $$("[data-photo]").forEach(inp=>inp.onchange=()=>{
+      const f=inp.files&&inp.files[0]; if(!f) return;
+      const r=new FileReader(); r.onload=()=>{listing.get(inp.dataset.photo).photo=r.result; drawPhotos();}; r.readAsDataURL(f);
+    });
+  }
+  function drawCond(){
+    $("#condRows").innerHTML=[...listing].map(([n,v])=>`
+      <div class="row">
+        <div class="thumb">${v.photo?`<img src="${v.photo}" alt="">`:`<span style="color:var(--accent)">${ico(iconOf(n))}</span>`}</div>
+        <span class="name">${n}</span>
+        <div class="seg" role="group" aria-label="Condition of ${n}">
+          ${["Like new","Good","Fair"].map(c=>`<button type="button" data-cond="${n}" data-v="${c}" aria-pressed="${v.c===c}">${c}</button>`).join("")}
+        </div>
+        <div class="checks" style="flex-basis:100%">
+          ${checksOf(n).map((c,k)=>`<label><input type="checkbox" ${k===0?"checked":""}> ${c}</label>`).join("")}
+        </div>
+      </div>`).join("");
+    $$("[data-cond]").forEach(b=>b.onclick=()=>{listing.get(b.dataset.cond).c=b.dataset.v; drawCond();});
+  }
+  function drawDays(){
+    const drop=$("input[name=handover]:checked").value==="drop";
+    const days=drop?["Mon 7 Dec","Wed 9 Dec","Fri 11 Dec","Mon 14 Dec","Wed 16 Dec","Fri 18 Dec","Mon 21 Dec"]:["Thu 10 Dec","Thu 17 Dec"];
+    $("#dropDay").innerHTML=days.map(d=>`<option>${d}</option>`).join("");
+  }
+  $$("input[name=handover]").forEach(r=>r.addEventListener("change",drawDays));
+  function goStep(n){
+    step=n;
+    [1,2,3].forEach(i=>$("#s"+i).hidden=i!==n);
+    $$("#steps li").forEach(li=>{const s=+li.dataset.s; li.className=s===n?"on":s<n?"done":"";});
+    $("#back").hidden=n===1;
+    $("#next").textContent=n===3?"List my items":"Continue";
+    $("#next").disabled=n===1&&!listing.size;
+    if(n===2) drawCond();
+  }
+  $("#next").onclick=()=>{
+    if(step===1&&!listing.size) return;
+    if(step<3) return goStep(step+1);
+    const drop=$("input[name=handover]:checked").value==="drop";
+    const k=listing.size;
+    $("#doneText").textContent=`${k} item${k>1?"s":""} listed. ${drop?"Drop off at the partner residence on":"We'll collect them on"} ${$("#dropDay").value}. ${drop?"Show this code at check-in.":"Keep this code for the driver."}`;
+    const dcode="SH-DROP-"+String(1000+Math.floor(Math.random()*9000));
+    $("#dropCode").textContent=dcode;
+    $("#doneTitle").textContent="Your items are listed";
+    $("#dropScan").hidden=false;
+    ["s1","s2","s3"].forEach(id=>$("#"+id).hidden=true);
+    $("#steps").hidden=true; $("#wizNav").hidden=true; $("#listDone").hidden=false;
+  };
+  $("#back").onclick=()=>goStep(step-1);
+  $("#dropScan").onclick=()=>{
+    const k=listing.size;
+    $("#doneTitle").textContent=`Checked in: ${k} item${k>1?"s":""} received`;
+    $("#doneSub").textContent="Thank you for passing them on. Your items will be cleaned and packed for students arriving on 29 January. In February we'll send you a short message about who got them.";
+    $("#dropScan").hidden=true;
+  };
+  $("#newListing").onclick=()=>{
+    $("#listDone").hidden=true; $("#steps").hidden=false; $("#wizNav").hidden=false;
+    $("#doneSub").textContent="Show this code when you hand your items over, so each item is linked to your listing. We'll remind you two days before.";
+    goStep(1);
+  };
+  // re-check disabled state when items change
+  $("#itemPicker").addEventListener("click",()=>{ if(step===1) $("#next").disabled=!listing.size; });
+  drawPicker(); drawPhotos(); drawDays(); goStep(1);
+
+  /* ---------- Screen 3: pass ---------- */
+  const PREVIEW={
+    bed:[["Duvet","duvet","Good","Bed pack · washed 22 Dec"],["Pillow","pillow","Like new","Bed pack · washed 22 Dec"],["Bedding set","sheets","Good","Bed pack · cover and sheet"]],
+    kitchen:[["Frying pan","pan","Good","Kitchen pack · coating intact"],["Pot","pot","Fair","Kitchen pack · replacement bought by the team"],["2 plates, 2 mugs","plates","Good","Kitchen pack · no cracks"],["2 sets of cutlery","cutlery","Like new","Kitchen pack"]],
+    lamp:[["Desk lamp","lamp","Like new","Bulb and cable tested"]]
+  };
+  const extras={Heater:["Heater","heater","Like new","Add-on · tested, CE mark"],Bike:["Bike","bike","Good","Add-on · brakes and lights checked"]};
+  function renderPass(){
+    $("#pName").textContent=state.name;
+    $("#pExample").hidden=!state.example;
+    $("#pSlot").textContent=state.slot;
+    const label=state.example?"Complete room + heater":state.label, paid=state.example?45:state.paid;
+    $("#pPack").textContent=`${label} · ${paid}€ paid`;
+    $("#pPledge").textContent=(state.example||state.pledge)?"Yes, you'll list your items when you leave":"Not taken";
+    const ready=!state.justBooked;
+    const steps=[
+      ["Reserved","Paid "+(state.justBooked?"today":"12 Oct 2026"),"done"],
+      ["Pack ready","Photos below, built on 5 Jan",ready?"done":"now"],
+      ["Collected",state.collected?"29 Jan 2027, 11:07":"Welcome Day, 29 Jan",state.collected?"done":ready?"now":""]
+    ];
+    if(state.justBooked) steps[1][1]="Expected around 5 Jan 2027";
+    $("#pStatus").innerHTML=steps.map(([t,s,c])=>`<li class="${c}"><span class="dot">${c==="done"?'<svg viewBox="0 0 24 24"><use href="#i-check"/></svg>':""}</span><div><b>${t}</b><small>${s}</small></div></li>`).join("");
+    const packs=state.example?["bed","kitchen","lamp"]:[...state.packs];
+    const addon=state.example?"Heater":state.addon;
+    const items=packs.flatMap(k=>PREVIEW[k]).concat(addon&&extras[addon]?[extras[addon]]:[]);
+    if(ready){
+      $("#pvLead").textContent="Built on 5 January from items listed by departing students in December 2026. Bedding has been washed and every item checked against the pack specification.";
+      $("#preview").innerHTML=items.map(([n,i,c,m])=>`<div class="pv"><div class="ph">${ico(i)}</div><div class="meta"><b>${n}</b><span class="tag ${c==="Like new"?"":"good"}">${c}</span><small class="muted">${m}</small></div></div>`).join("");
+    }else{
+      $("#pvLead").textContent="Your pack will be built after listings close. Around 5 January you'll see a photo and the condition of each item here.";
+      $("#preview").innerHTML=items.map(([n,i])=>`<div class="pv" style="opacity:.55"><div class="ph">${ico(i)}</div><div class="meta"><b>${n}</b><small class="muted">Photo coming in January</small></div></div>`).join("");
+    }
+    $("#pCode").textContent=state.code;
+    const collected=!!state.collected;
+    $("#scanBox").hidden=collected; $("#stamp").hidden=!collected;
+    $("#scanBtn").disabled=!ready;
+    $("#scanBtn").textContent=ready?"Try it: simulate the desk check-in":"Check-in opens once your pack is ready";
+  }
+  $("#scanBtn").onclick=()=>{state.collected=true; renderPass();};
+  $("#resetScan").onclick=()=>{state.collected=false; renderPass();};
+  $("#mismatch").onclick=()=>{$("#mismatchMsg").hidden=false;};
+
+  renderPass();
+  spy();
+  // A link with #pass, #leave or #arrive opens the page on that section (#pass, #leave, #arrive)
+  let start=""; try{ start=location.hash.slice(1); }catch(e){}
+  if(views.includes(start) && start!=="home"){
+    go(start,true);
+    window.addEventListener("load",()=>go(start,true));
+  }
+})();
+</script>
