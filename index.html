@@ -43,6 +43,7 @@
   --ok:#8FD0A8; --ok-soft:#1C2A22; color-scheme:dark;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55}
 h1,h2,h3{font-family:var(--display);font-weight:800;letter-spacing:-.02em;line-height:1.12;margin:0;text-wrap:balance}
 h1{font-size:clamp(2rem,5vw,3.2rem)}
@@ -121,6 +122,33 @@ section.view+section.view{border-top:1px solid var(--line);padding-top:56px}
 .chip{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 12px;font-size:.84rem;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
 .chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
 .chip[disabled]{opacity:.45;cursor:not-allowed}
+.deal{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;text-align:left;border:1.5px solid var(--line);border-radius:var(--r);padding:16px 20px;background:var(--bg);cursor:pointer}
+.deal:hover{border-color:var(--muted)}
+.deal[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.deal-l{display:flex;flex-direction:column;gap:4px;min-width:0}
+.deal-r{display:flex;align-items:baseline;gap:8px}
+.label{font-size:.82rem;font-weight:700;margin:0 0 10px}
+.label .muted{font-weight:400}
+.packs3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pk{position:relative;border:1.5px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px;cursor:pointer;background:var(--bg);min-width:0}
+.pk:hover{border-color:var(--muted)}
+.pk input{position:absolute;opacity:0;pointer-events:none}
+.pk:has(input:checked){border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.pk:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.pk .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pk .tick{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line);display:grid;place-items:center;flex:none}
+.pk .tick svg{width:12px;height:12px;fill:none;stroke:var(--on-accent);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.pk:has(input:checked) .tick{background:var(--accent-fill);border-color:var(--accent-fill)}
+.pk:has(input:checked) .tick svg{opacity:1}
+.pk h3{font-size:1rem}
+.pk .p{font-family:var(--display);font-weight:800;font-size:1.25rem}
+.pk ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:4px;font-size:.84rem}
+.pk .std{font-size:.75rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px;margin-top:auto}
+.lines{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;font-size:.88rem}
+.lines li{display:flex;justify-content:space-between;gap:12px}
+.lines li.save{color:var(--ok)}
+.pledge{display:flex;gap:10px;align-items:flex-start;font-size:.82rem;padding:12px;border:1px solid var(--line);border-radius:8px}
+.pledge input{margin-top:3px}
 .compare{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:14px 16px;background:var(--surface);border-radius:var(--r);font-size:.9rem}
 .compare s{color:var(--muted)}
 .panel{border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:16px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 80px)}
@@ -160,6 +188,11 @@ section.view+section.view{border-top:1px solid var(--line);padding-top:56px}
 .seg button[aria-pressed="true"]{background:var(--accent-fill);color:var(--on-accent);font-weight:600}
 .checks{display:flex;gap:14px;flex-wrap:wrap;font-size:.84rem}
 .checks label{display:flex;gap:6px;align-items:center}
+.groups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.groups>div{display:flex;flex-direction:column;gap:8px;min-width:0}
+.groups .label{margin:0}
+.groups .choices{flex-direction:column;align-items:flex-start}
+@media (max-width:860px){.groups{grid-template-columns:1fr 1fr}}
 .options{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .option{border:1.5px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px;cursor:pointer;position:relative}
 .option input{position:absolute;opacity:0;pointer-events:none}
@@ -214,12 +247,13 @@ footer .bar{font-size:.78rem;color:var(--muted)}
 
 @media (max-width:860px){
   .hero,.split,.pass-wrap{grid-template-columns:1fr}
+  .packs3{grid-template-columns:repeat(3,minmax(0,1fr))}
   .hero-mark{display:none}
   .panel{position:static}
   .cycle{grid-template-columns:1fr 1fr}
 }
 @media (max-width:560px){
-  .packs,.options,.stats{grid-template-columns:1fr}
+  .packs,.packs3,.options,.stats{grid-template-columns:1fr}
   .cycle{grid-template-columns:1fr}
   nav{width:100%}
   nav button{flex:1;padding:8px 6px}
@@ -275,7 +309,7 @@ footer .bar{font-size:.78rem;color:var(--muted)}
 <section class="view" id="v-home">
   <div class="hero">
     <div>
-      <p class="eyebrow">Spring 2027 · Reservations open</p>
+      <p class="eyebrow">Winter cycle 2026/27 · Reservations open</p>
       <h1>Make leaving lighter and arriving simpler.</h1>
       <p class="lead">Departing exchange students pass on the room essentials they can't take home. Incoming students reserve a starter pack before they land and pick it up in Lisbon during the welcome week.</p>
       <div class="ctas">
@@ -299,12 +333,12 @@ footer .bar{font-size:.78rem;color:var(--muted)}
   <div class="card">
     <div>
       <p class="eyebrow">How one handover works</p>
-      <h2>Fall 2026 to Spring 2027</h2>
+      <h2>Winter cycle 2026/27</h2>
     </div>
     <ol class="cycle">
       <li><span class="who">Leaving</span><span class="date">Nov to 4 Dec</span><span class="muted">Photograph and list your items, before exams start.</span></li>
       <li><span class="who">Leaving</span><span class="date">7 to 21 Dec</span><span class="muted">Drop off at the partner residence or have them collected. Bedding is washed.</span></li>
-      <li class="in"><span class="who">Arriving</span><span class="date">Until 15 Jan</span><span class="muted">Reserve and pay for your pack. You see its photos once it's built.</span></li>
+      <li class="in"><span class="who">Arriving</span><span class="date">Until 15 Jan</span><span class="muted">Reserve your packs and pay. You see their photos once they're built.</span></li>
       <li class="in"><span class="who">Arriving</span><span class="date">29 Jan 2027</span><span class="muted">Welcome Day. Show your pass and take your pack home.</span></li>
     </ol>
   </div>
@@ -315,56 +349,55 @@ footer .bar{font-size:.78rem;color:var(--muted)}
   <span class="anchor" id="arrive"></span>
   <div>
     <p class="eyebrow">Screen 1 · Pre-arrival booking</p>
-    <h2>Reserve your starter pack</h2>
-    <p class="muted" style="margin-top:8px">For exchange students arriving at Nova SBE in spring 2027. Pickup on Welcome Day, 29 January 2027.</p>
+    <h2>Reserve your room basics</h2>
+    <p class="muted" style="margin-top:8px">For exchange students arriving at Nova SBE in January 2027. Pickup on Welcome Day, 29 January 2027.</p>
   </div>
 
   <form class="split" id="bookForm" novalidate>
-    <div style="display:flex;flex-direction:column;gap:20px">
-      <div class="packs" role="radiogroup" aria-label="Pack">
-        <label class="pack">
-          <input type="radio" name="pack" id="pack-ess" value="essentials" checked>
-          <div class="top"><h3>Essentials</h3><span class="price num">30€</span></div>
-          <ul class="items">
-            <li><span class="ico"><svg><use href="#i-duvet"/></svg></span>Bedding set: duvet, pillow, sheets</li>
-            <li><span class="ico"><svg><use href="#i-lamp"/></svg></span>Desk lamp</li>
-            <li><span class="ico"><svg><use href="#i-pan"/></svg></span>Kitchen kit: pan, pot, plates, cutlery, mugs</li>
-          </ul>
-          <span class="stock num">41 of 60 packs left for 29 January</span>
-        </label>
-        <label class="pack">
-          <input type="radio" name="pack" id="pack-plus" value="plus">
-          <div class="top"><h3>Plus</h3><span class="price num">45€</span></div>
-          <ul class="items">
-            <li><span class="ico"><svg><use href="#i-check"/></svg></span>Everything in Essentials</li>
-            <li><span class="ico"><svg><use href="#i-bike"/></svg></span>One larger item, from what departing students listed:</li>
-          </ul>
-          <div class="choices" id="extraChoices" aria-label="Larger item">
-            <button type="button" class="chip" data-extra="Heater" aria-pressed="true"><svg width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.8"><use href="#i-heater"/></svg>Heater · 6 left</button>
-            <button type="button" class="chip" data-extra="Bike" aria-pressed="false"><svg width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.8"><use href="#i-bike"/></svg>Bike · 3 left</button>
-            <button type="button" class="chip" data-extra="Fan" aria-pressed="false" disabled><svg width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.8"><use href="#i-fan"/></svg>Fan · none listed</button>
-          </div>
-          <span class="stock num">14 of 20 packs left for 29 January</span>
-        </label>
+    <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+
+      <button type="button" class="deal" id="dealBtn" aria-pressed="true">
+        <span class="deal-l">
+          <span class="eyebrow">Complete room</span>
+          <b>Bed pack + Kitchen pack + Desk lamp</b>
+          <span class="muted small" id="dealHint">Selected. You save 2€ compared with buying the three packs separately.</span>
+        </span>
+        <span class="deal-r"><s class="muted num">32€</s> <span class="price num">30€</span></span>
+      </button>
+
+      <div>
+        <p class="label">Packs <span class="muted">· every pack has fixed contents, checked against our specification</span></p>
+        <div class="packs3" id="packCards"></div>
+      </div>
+
+      <div>
+        <p class="label">Add-on <span class="muted">· one per order, 15€, while stock lasts</span></p>
+        <div class="choices" id="addonChoices" role="radiogroup" aria-label="Add-on"></div>
       </div>
 
       <div class="compare">
-        <span>Buying the same items new: <s class="num">about 96€</s></span>
-        <span>Your pack: <b class="num" id="cmpPrice">30€</b></span>
+        <span>Buying the same basics new: <s class="num">about 96€</s></span>
+        <span>Your order: <b class="num" id="cmpPrice">30€</b></span>
       </div>
 
       <div class="card">
         <h3>How you'll know what you get</h3>
-        <p class="muted">Packs are built from items that departing students photograph and list. After matching, around 5 January, you'll see photos and the condition of every item in your pack. If it doesn't match, you get a full refund.</p>
+        <p class="muted">The contents of each pack are fixed, so you know what you get even before the items are matched. Packs are built from items that departing students photograph and list. After matching, around 5 January, you'll see photos and the condition of every item. If something doesn't match, you get a full refund. If an item is missing, we replace it with a second-hand item of the same type. If your add-on runs out, we refund it.</p>
       </div>
     </div>
 
     <aside class="panel" aria-label="Checkout">
       <h3>Your reservation</h3>
+      <ul class="lines" id="sumLines"></ul>
+      <div class="field">
+        <label for="hub">Residence hub</label>
+        <select id="hub">
+          <option selected>Carcavelos, next to Nova SBE</option>
+          <option disabled>More Lisbon residences from 2028</option>
+        </select>
+      </div>
       <dl class="kv">
-        <dt>Pack</dt><dd id="sumPack">Essentials</dd>
         <dt>Pickup</dt><dd>Welcome Day, 29 Jan 2027</dd>
-        <dt>Where</dt><dd>Partner residence, Carcavelos</dd>
         <dt>Held until</dt><dd>12 Feb 2027</dd>
       </dl>
       <div class="field">
@@ -384,9 +417,11 @@ footer .bar{font-size:.78rem;color:var(--muted)}
         <span class="hint">We only accept university emails, so every user is a verified student.</span>
         <span class="err" id="emailErr" hidden>Use your university email, not a personal one like Gmail or Outlook.</span>
       </div>
+      <label class="pledge"><input type="checkbox" id="pledge"> <span><b>Pass it on (optional).</b> When I leave Lisbon, I'll list my own items so the next student gets a pack too.</span></label>
       <div class="total"><span>Total today</span><b class="num" id="sumPrice">30€</b></div>
+      <span class="err" id="packErr" hidden>Choose at least one pack.</span>
       <button class="btn" type="submit" id="payBtn">Pay 30€ with Stripe</button>
-      <p class="note"><svg><use href="#i-shield"/></svg><span>Full refund if your pack isn't ready or doesn't match its photos. Reservations close 15 January 2027.</span></p>
+      <p class="note"><svg><use href="#i-shield"/></svg><span>Full refund if your pack isn't ready or doesn't match its preview. Reservations close 15 January 2027.</span></p>
     </aside>
   </form>
 </section>
@@ -410,9 +445,10 @@ footer .bar{font-size:.78rem;color:var(--muted)}
   <div class="card" id="s1">
     <div>
       <h3>What are you leaving behind?</h3>
-      <p class="muted">Tap the items you have, then add a photo of each one.</p>
+      <p class="muted">Tick the items you have from our standard list, then add a photo of each one.</p>
     </div>
-    <div class="choices" id="itemPicker"></div>
+    <div class="groups" id="itemPicker"></div>
+    <p class="note muted" style="margin:0">Only items on this list are accepted. Mattresses, furniture, food and personal items are not.</p>
     <div class="rows" id="photoRows"></div>
   </div>
 
@@ -420,7 +456,7 @@ footer .bar{font-size:.78rem;color:var(--muted)}
   <div class="card" id="s2" hidden>
     <div>
       <h3>How is each item?</h3>
-      <p class="muted">Be honest. Incoming students see this tag before they pick up their pack.</p>
+      <p class="muted">Be honest. Incoming students see this tag in their pack preview. Items below "fair" are not accepted.</p>
     </div>
     <div class="rows" id="condRows"></div>
   </div>
@@ -504,11 +540,12 @@ footer .bar{font-size:.78rem;color:var(--muted)}
           <button class="btn ghost" type="button" id="resetScan">Reset demo</button>
         </div>
         <dl class="kv">
-          <dt>Pack</dt><dd id="pPack">Essentials · 30€ paid</dd>
+          <dt>Order</dt><dd id="pPack">Complete room + heater · 45€ paid</dd>
           <dt>Day</dt><dd>Welcome Day, 29 Jan 2027</dd>
           <dt>Time</dt><dd id="pSlot">11:00 to 11:30</dd>
           <dt>Where</dt><dd>Partner residence, Carcavelos</dd>
           <dt>Held until</dt><dd>12 Feb 2027</dd>
+          <dt>Pass it on</dt><dd id="pPledge">Yes</dd>
         </dl>
         <div class="perf"></div>
         <ol class="status" id="pStatus"></ol>
@@ -518,12 +555,12 @@ footer .bar{font-size:.78rem;color:var(--muted)}
     <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
       <div>
         <h3>Your pack preview</h3>
-        <p class="muted" style="margin-top:4px" id="pvLead">Built on 5 January from items listed by departing students in fall 2026. Bedding has been washed.</p>
+        <p class="muted" style="margin-top:4px" id="pvLead">Built on 5 January from items listed by departing students in December 2026.</p>
       </div>
       <div class="preview" id="preview"></div>
       <div class="card">
         <h3>Something doesn't look right?</h3>
-        <p class="muted">If an item is missing or doesn't match its photo, tell us before Welcome Day. You get a full refund, or we swap the item if we have another.</p>
+        <p class="muted">If an item doesn't match its photo, tell us before Welcome Day. You get a full refund, or we swap the item if we have another.</p>
         <div><button class="btn ghost" type="button" id="mismatch">Report a mismatch</button></div>
         <div class="alert" id="mismatchMsg" hidden>Report received. We'll reply within 48 hours with a swap or a full refund to your card.</div>
       </div>
@@ -564,34 +601,66 @@ footer .bar{font-size:.78rem;color:var(--muted)}
   window.addEventListener("scroll",spy,{passive:true});
   document.addEventListener("click",e=>{const t=e.target.closest("[data-go]"); if(t){e.preventDefault(); go(t.dataset.go);}});
 
-  /* ---------- Screen 1: booking ---------- */
-  const state={pack:"essentials",extra:"Heater",name:"Lena Hoffmann",slot:"11:00 to 11:30",example:true,code:"SH-2701-0482",collected:false};
-  const price=()=>state.pack==="plus"?45:30;
+  /* ---------- Screen 1: booking (Appendix D catalog) ---------- */
+  const PACKS=[
+    {id:"bed",name:"Bed pack",price:16,icon:"duvet",items:["1 duvet","1 pillow","1 bedding set (cover and sheet), single bed"],std:"Washed, no stains or holes",left:"38 left"},
+    {id:"kitchen",name:"Kitchen pack",price:12,icon:"pan",items:["1 frying pan","1 pot","2 plates, 2 mugs","2 sets of cutlery"],std:"Clean, no cracks, pan coating intact",left:"44 left"},
+    {id:"lamp",name:"Desk lamp",price:4,icon:"lamp",items:["1 desk lamp","with a working bulb"],std:"Tested, cable and plug intact",left:"51 left"}
+  ];
+  const ADDONS=[
+    {id:"",name:"No add-on",left:""},
+    {id:"Heater",name:"Heater",icon:"heater",left:"6 left"},
+    {id:"Bike",name:"Bike",icon:"bike",left:"3 left"},
+    {id:"Fan",name:"Fan",icon:"fan",left:"sold out",off:true}
+  ];
+  const state={packs:new Set(["bed","kitchen","lamp"]),addon:"Heater",name:"Lena Hoffmann",slot:"11:00 to 11:30",pledge:true,example:true,code:"SH-2701-0482",collected:false};
+  const isComplete=()=>state.packs.size===3;
+  const packSum=()=>PACKS.filter(p=>state.packs.has(p.id)).reduce((a,p)=>a+p.price,0);
+  const total=()=>(isComplete()?30:packSum())+(state.addon&&state.packs.size?15:0);
+  const orderLabel=()=>{
+    const base=isComplete()?"Complete room":PACKS.filter(p=>state.packs.has(p.id)).map(p=>p.name).join(", ");
+    return base+(state.addon?" + "+state.addon.toLowerCase():"");
+  };
+  $("#packCards").innerHTML=PACKS.map(p=>`
+    <label class="pk">
+      <input type="checkbox" value="${p.id}" ${state.packs.has(p.id)?"checked":""}>
+      <div class="top"><span class="ico">${ico(p.icon)}</span><span class="tick"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg></span></div>
+      <div class="top"><h3>${p.name}</h3><span class="p num">${p.price}€</span></div>
+      <ul>${p.items.map(i=>`<li>${i}</li>`).join("")}</ul>
+      <span class="stock num">${p.left}</span>
+      <span class="std">Standard: ${p.std}</span>
+    </label>`).join("");
+  $("#addonChoices").innerHTML=ADDONS.map(a=>`<button type="button" class="chip" role="radio" data-addon="${a.id}" aria-pressed="${state.addon===a.id}" ${a.off?"disabled":""}>${a.icon?`<svg width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.8"><use href="#i-${a.icon}"/></svg>`:""}${a.name}${a.id?" · 15€":""}${a.left?` · ${a.left}`:""}</button>`).join("");
   function syncBooking(){
-    state.pack=$("input[name=pack]:checked").value;
-    const p=price();
-    $("#cmpPrice").textContent=p+"€";
-    $("#sumPrice").textContent=p+"€";
-    $("#payBtn").textContent=`Pay ${p}€ with Stripe`;
-    $("#sumPack").textContent=state.pack==="plus"?`Plus, with ${state.extra.toLowerCase()}`:"Essentials";
-    $$("#extraChoices .chip").forEach(b=>b.tabIndex=state.pack==="plus"?0:-1);
+    const t=total();
+    $("#dealBtn").setAttribute("aria-pressed",isComplete());
+    $("#dealHint").textContent=isComplete()?"Selected. You save 2€ compared with buying the three packs separately.":"Take all three packs for 30€ instead of 32€.";
+    $$("#packCards input").forEach(i=>i.checked=state.packs.has(i.value));
+    $$("#addonChoices .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.addon===state.addon));
+    const lines=PACKS.filter(p=>state.packs.has(p.id)).map(p=>[p.name,p.price+"€",""]);
+    if(isComplete()) lines.push(["Complete room discount","-2€","save"]);
+    if(state.addon&&state.packs.size) lines.push([state.addon+" (add-on)","15€",""]);
+    $("#sumLines").innerHTML=lines.length?lines.map(([a,b,c])=>`<li class="${c}"><span>${a}</span><span class="num">${b}</span></li>`).join(""):`<li class="muted">No pack selected yet. Add-ons come with at least one pack.</li>`;
+    $("#cmpPrice").textContent=t+"€";
+    $("#sumPrice").textContent=t+"€";
+    $("#payBtn").textContent=`Pay ${t}€ with Stripe`;
+    $("#packErr").hidden=true;
   }
-  $$("input[name=pack]").forEach(r=>r.addEventListener("change",syncBooking));
-  $$("#extraChoices .chip").forEach(b=>b.addEventListener("click",e=>{
-    e.preventDefault(); if(b.disabled) return;
-    $("#pack-plus").checked=true;
-    $$("#extraChoices .chip").forEach(x=>x.setAttribute("aria-pressed",x===b));
-    state.extra=b.dataset.extra; syncBooking();
-  }));
+  $("#dealBtn").onclick=()=>{ state.packs=isComplete()?new Set():new Set(["bed","kitchen","lamp"]); syncBooking(); };
+  $$("#packCards input").forEach(i=>i.addEventListener("change",()=>{ i.checked?state.packs.add(i.value):state.packs.delete(i.value); syncBooking(); }));
+  $$("#addonChoices .chip").forEach(b=>b.addEventListener("click",()=>{ if(b.disabled) return; state.addon=b.dataset.addon; syncBooking(); }));
   const personal=/@(gmail|googlemail|outlook|hotmail|live|yahoo|icloud|me|proton|protonmail|gmx|libero)\./i;
   $("#bookForm").addEventListener("submit",e=>{
     e.preventDefault();
+    if(!state.packs.size){ $("#packErr").hidden=false; return; }
     const email=$("#email").value.trim();
     const bad=!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || personal.test(email);
     $("#emailErr").hidden=!bad;
     if(bad){ $("#emailErr").textContent=!email?"Enter your university email to reserve.":"Use your university email, not a personal one like Gmail or Outlook."; $("#email").focus(); return; }
     state.name=$("#name").value.trim()||"Lena Hoffmann";
     state.slot=$("#slot").value;
+    state.pledge=$("#pledge").checked;
+    state.paid=total(); state.label=orderLabel();
     state.example=false; state.justBooked=true; state.collected=false;
     state.code="SH-2701-"+String(1000+Math.floor(Math.random()*9000));
     renderPass();
@@ -600,14 +669,21 @@ footer .bar{font-size:.78rem;color:var(--muted)}
   syncBooking();
 
   /* ---------- Screen 2: listing flow ---------- */
-  const catalogue=[["Duvet","duvet"],["Pillow","pillow"],["Bed sheets","sheets"],["Desk lamp","lamp"],["Pan","pan"],["Pot","pot"],["Plates","plates"],["Cutlery","cutlery"],["Mugs","mug"],["Heater","heater"],["Bike","bike"],["Fan","fan"]];
-  const listing=new Map([["Duvet",{c:"Good",photo:null}],["Desk lamp",{c:"Like new",photo:null}],["Pan",{c:"Good",photo:null}],["Heater",{c:"Like new",photo:null}]]);
+  const catalogue=[
+    ["Duvet","duvet","Bed pack",["Washed","No stains or holes"]],["Pillow","pillow","Bed pack",["Washed","No stains or holes"]],["Bedding set","sheets","Bed pack",["Washed","Cover and sheet, single bed"]],
+    ["Frying pan","pan","Kitchen pack",["Clean","Coating intact"]],["Pot","pot","Kitchen pack",["Clean","No dents or cracks"]],["Plates","plates","Kitchen pack",["Clean","No cracks"]],["Mugs","mug","Kitchen pack",["Clean","No cracks"]],["Cutlery","cutlery","Kitchen pack",["Clean","Complete set"]],
+    ["Desk lamp","lamp","Desk lamp",["Tested, bulb works","Cable and plug intact"]],
+    ["Heater","heater","Add-ons",["Tested","Cable and plug intact","CE mark"]],["Fan","fan","Add-ons",["Tested","Cable and plug intact","CE mark"]],["Bike","bike","Add-ons",["Brakes and lights checked","Tires inflated"]]
+  ];
+  const listing=new Map([["Duvet",{c:"Good",photo:null}],["Frying pan",{c:"Good",photo:null}],["Desk lamp",{c:"Like new",photo:null}],["Heater",{c:"Like new",photo:null}]]);
   let step=1;
   function drawPicker(){
-    $("#itemPicker").innerHTML=catalogue.map(([n,i])=>`<button type="button" class="chip" data-item="${n}" aria-pressed="${listing.has(n)}"><svg width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.8"><use href="#i-${i}"/></svg>${n}</button>`).join("");
+    const groups=["Bed pack","Kitchen pack","Desk lamp","Add-ons"];
+    $("#itemPicker").innerHTML=groups.map(g=>`<div><p class="label">${g}</p><div class="choices">${catalogue.filter(c=>c[2]===g).map(([n,i])=>`<button type="button" class="chip" data-item="${n}" aria-pressed="${listing.has(n)}"><svg width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.8"><use href="#i-${i}"/></svg>${n}</button>`).join("")}</div></div>`).join("");
     $$("#itemPicker .chip").forEach(b=>b.onclick=()=>{const n=b.dataset.item; listing.has(n)?listing.delete(n):listing.set(n,{c:"Good",photo:null}); drawPicker(); drawPhotos();});
   }
   const iconOf=n=>(catalogue.find(c=>c[0]===n)||[,"duvet"])[1];
+  const checksOf=n=>(catalogue.find(c=>c[0]===n)||[,,,["Clean"]])[3];
   function drawPhotos(){
     if(!listing.size){$("#photoRows").innerHTML=`<div class="row muted">Pick at least one item above.</div>`;return;}
     $("#photoRows").innerHTML=[...listing].map(([n,v])=>`
@@ -630,9 +706,7 @@ footer .bar{font-size:.78rem;color:var(--muted)}
           ${["Like new","Good","Fair"].map(c=>`<button type="button" data-cond="${n}" data-v="${c}" aria-pressed="${v.c===c}">${c}</button>`).join("")}
         </div>
         <div class="checks" style="flex-basis:100%">
-          <label><input type="checkbox" checked> Clean</label>
-          <label><input type="checkbox" checked> Works</label>
-          <label><input type="checkbox"> No stains or damage</label>
+          ${checksOf(n).map((c,k)=>`<label><input type="checkbox" ${k===0?"checked":""}> ${c}</label>`).join("")}
         </div>
       </div>`).join("");
     $$("[data-cond]").forEach(b=>b.onclick=()=>{listing.get(b.dataset.cond).c=b.dataset.v; drawCond();});
@@ -669,7 +743,7 @@ footer .bar{font-size:.78rem;color:var(--muted)}
   $("#dropScan").onclick=()=>{
     const k=listing.size;
     $("#doneTitle").textContent=`Checked in: ${k} item${k>1?"s":""} received`;
-    $("#doneSub").textContent="Thank you for passing them on. Your items will be washed and packed for students arriving on 29 January.";
+    $("#doneSub").textContent="Thank you for passing them on. Your items will be cleaned and packed for students arriving on 29 January. In February we'll send you a short message about who got them.";
     $("#dropScan").hidden=true;
   };
   $("#newListing").onclick=()=>{
@@ -682,16 +756,19 @@ footer .bar{font-size:.78rem;color:var(--muted)}
   drawPicker(); drawPhotos(); drawDays(); goStep(1);
 
   /* ---------- Screen 3: pass ---------- */
-  const essentials=[
-    ["Duvet","duvet","Good","Washed 22 Dec"],["Pillow","pillow","Like new","Washed 22 Dec"],["Bed sheets","sheets","Good","Washed 22 Dec"],
-    ["Desk lamp","lamp","Like new","Bulb tested"],["Pan and pot","pan","Good","Scratch-free"],["Plates, cutlery, mugs","plates","Good","2 of each"]
-  ];
-  const extras={Heater:["Heater","heater","Like new","Tested, 2000 W"],Bike:["Bike","bike","Good","Lock included"]};
+  const PREVIEW={
+    bed:[["Duvet","duvet","Good","Bed pack · washed 22 Dec"],["Pillow","pillow","Like new","Bed pack · washed 22 Dec"],["Bedding set","sheets","Good","Bed pack · cover and sheet"]],
+    kitchen:[["Frying pan","pan","Good","Kitchen pack · coating intact"],["Pot","pot","Fair","Kitchen pack · replacement bought by the team"],["2 plates, 2 mugs","plates","Good","Kitchen pack · no cracks"],["2 sets of cutlery","cutlery","Like new","Kitchen pack"]],
+    lamp:[["Desk lamp","lamp","Like new","Bulb and cable tested"]]
+  };
+  const extras={Heater:["Heater","heater","Like new","Add-on · tested, CE mark"],Bike:["Bike","bike","Good","Add-on · brakes and lights checked"]};
   function renderPass(){
     $("#pName").textContent=state.name;
     $("#pExample").hidden=!state.example;
     $("#pSlot").textContent=state.slot;
-    $("#pPack").textContent=state.pack==="plus"?`Plus, with ${state.extra.toLowerCase()} · 45€ paid`:"Essentials · 30€ paid";
+    const label=state.example?"Complete room + heater":state.label, paid=state.example?45:state.paid;
+    $("#pPack").textContent=`${label} · ${paid}€ paid`;
+    $("#pPledge").textContent=(state.example||state.pledge)?"Yes, you'll list your items when you leave":"Not taken";
     const ready=!state.justBooked;
     const steps=[
       ["Reserved","Paid "+(state.justBooked?"today":"12 Oct 2026"),"done"],
@@ -700,15 +777,16 @@ footer .bar{font-size:.78rem;color:var(--muted)}
     ];
     if(state.justBooked) steps[1][1]="Expected around 5 Jan 2027";
     $("#pStatus").innerHTML=steps.map(([t,s,c])=>`<li class="${c}"><span class="dot">${c==="done"?'<svg viewBox="0 0 24 24"><use href="#i-check"/></svg>':""}</span><div><b>${t}</b><small>${s}</small></div></li>`).join("");
-    const items=essentials.concat(state.pack==="plus"?[extras[state.extra]]:[]);
+    const packs=state.example?["bed","kitchen","lamp"]:[...state.packs];
+    const addon=state.example?"Heater":state.addon;
+    const items=packs.flatMap(k=>PREVIEW[k]).concat(addon&&extras[addon]?[extras[addon]]:[]);
     if(ready){
-      $("#pvLead").textContent="Built on 5 January from items listed by departing students in fall 2026. Bedding has been washed.";
-      $("#preview").innerHTML=items.map(([n,i,c,m])=>`<div class="pv"><div class="ph">${ico(i)}</div><div class="meta"><b>${n}</b><span class="tag ${c==="Good"?"good":""}">${c}</span><small class="muted">${m}</small></div></div>`).join("");
+      $("#pvLead").textContent="Built on 5 January from items listed by departing students in December 2026. Bedding has been washed and every item checked against the pack specification.";
+      $("#preview").innerHTML=items.map(([n,i,c,m])=>`<div class="pv"><div class="ph">${ico(i)}</div><div class="meta"><b>${n}</b><span class="tag ${c==="Like new"?"":"good"}">${c}</span><small class="muted">${m}</small></div></div>`).join("");
     }else{
       $("#pvLead").textContent="Your pack will be built after listings close. Around 5 January you'll see a photo and the condition of each item here.";
       $("#preview").innerHTML=items.map(([n,i])=>`<div class="pv" style="opacity:.55"><div class="ph">${ico(i)}</div><div class="meta"><b>${n}</b><small class="muted">Photo coming in January</small></div></div>`).join("");
     }
-    const packLabel=state.pack==="plus"?`Plus with ${state.extra.toLowerCase()}`:"Essentials";
     $("#pCode").textContent=state.code;
     const collected=!!state.collected;
     $("#scanBox").hidden=collected; $("#stamp").hidden=!collected;
